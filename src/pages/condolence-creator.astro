@@ -1,0 +1,140 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import { generateCompletion } from '../lib/ai';
+
+let generatedMessage = '';
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    console.log('Content-Type:', Astro.request.headers.get('content-type'));
+    
+    let recipientName = '';
+    let relationship = '';
+    let tone = 'compassionate';
+    
+    const contentType = Astro.request.headers.get('content-type') || '';
+    
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      const formData = await Astro.request.formData();
+      recipientName = formData.get('recipientName')?.toString() || '';
+      relationship = formData.get('relationship')?.toString() || '';
+      tone = formData.get('tone')?.toString() || 'compassionate';
+    } else {
+      // Fallback: try to parse as text
+      const body = await Astro.request.text();
+      const params = new URLSearchParams(body);
+      recipientName = params.get('recipientName') || '';
+      relationship = params.get('relationship') || '';
+      tone = params.get('tone') || 'compassionate';
+    }
+
+    const toneGuidance = {
+      compassionate: 'Write with deep compassion and gentleness. Focus on offering comfort.',
+      supportive: 'Write with a tone of active support. Emphasize that you are there for them.',
+      celebrating: 'Celebrate the life of the deceased while acknowledging the grief.'
+    };
+
+    const prompt = `Write a sincere condolence message for ${recipientName} who has lost their ${relationship}.
+
+Tone: ${toneGuidance[tone as keyof typeof toneGuidance]}
+
+The message should:
+- Be approximately 50-80 words
+- Feel genuine and heartfelt
+- Include the recipient's name (${recipientName}) naturally in the message
+- Reference their relationship to the deceased (their ${relationship})
+- Be formatted like a social media post or card message (not a formal letter)
+- Do NOT start with "Dear" - begin directly with the condolence message
+- End with a simple, warm closing
+
+Write it as a standalone message that could be posted, shared, or written in a card.`;
+
+    generatedMessage = await generateCompletion([
+      { role: 'system', content: 'You are a compassionate writer helping people express condolences with authenticity and warmth. Always use the exact names and relationships provided.' },
+      { role: 'user', content: prompt }
+    ], 0.8);
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to generate message. Please try again.';
+    console.error('Condolence generation error:', err);
+  }
+}
+---
+
+<Layout title="Condolence Message Creator">
+  <a href="/" class="back-link">← Back to Home</a>
+  <div class="card relative">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center hidden z-10">
+      <div class="text-center">
+        <svg class="animate-spin h-12 w-12 text-memorial-600 mx-auto mb-4" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h3 class="text-xl font-serif text-memorial-600 mb-2">Creating Your Message</h3>
+        <p class="text-memorial-500">Our AI is crafting a heartfelt condolence message...</p>
+        <div class="mt-4 flex justify-center space-x-1">
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-header">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-serif text-memorial-600">Condolence Message Creator</h2>
+    </div>
+
+    {error && <div class="error">{error}</div>}
+
+    {!generatedMessage ? (
+      <form method="POST" enctype="application/x-www-form-urlencoded">
+        <div class="form-group">
+          <label class="form-label" for="recipientName">Recipient's name</label>
+          <input type="text" id="recipientName" name="recipientName" class="form-input" placeholder="Who are you writing to?" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="relationship">Their relationship to the deceased</label>
+          <input type="text" id="relationship" name="relationship" class="form-input" placeholder="e.g., mother, father, spouse" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tone">Message tone</label>
+          <select id="tone" name="tone" class="form-select">
+            <option value="compassionate">Compassionate & Gentle</option>
+            <option value="supportive">Supportive & Present</option>
+            <option value="celebrating">Celebrating Their Life</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Message</button>
+      </form>
+    ) : (
+      <div>
+        <div class="result-box"><p class="result-text">{generatedMessage}</p></div>
+        <div class="button-group">
+          <a href="/condolence-creator" class="btn btn-secondary">Create Another</a>
+          <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.querySelector('.result-text').textContent)">Copy Message</button>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    if (form && loadingOverlay) {
+      form.addEventListener('submit', () => {
+        loadingOverlay.classList.remove('hidden');
+      });
+    }
+  });
+</script>

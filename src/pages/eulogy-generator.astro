@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import { generateCompletion } from '../lib/ai';
+
+let generatedEulogy = '';
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const name = formData.get('name')?.toString() || '';
+    const relationship = formData.get('relationship')?.toString() || '';
+    const qualities = formData.get('qualities')?.toString() || '';
+    const memories = formData.get('memories')?.toString() || '';
+    const tone = formData.get('tone')?.toString() || 'warm';
+
+    const toneDescriptions = {
+      warm: 'warm, comforting, and compassionate',
+      celebratory: 'celebratory, uplifting, and joyful',
+      reflective: 'reflective, peaceful, and contemplative',
+      formal: 'formal, dignified, and traditional'
+    };
+
+    const prompt = `Write a heartfelt eulogy for ${name}, who was a ${relationship}. 
+
+Their best qualities were: ${qualities}
+
+Special memories: ${memories}
+
+The tone should be ${toneDescriptions[tone as keyof typeof toneDescriptions]}.
+
+Write a complete eulogy that:
+- Celebrates their life and impact
+- Honors their memory with grace
+- Provides comfort to those grieving
+- Is approximately 200-300 words
+- Feels genuine and personal
+
+Do not include a title or greeting, just the eulogy text itself.`;
+
+    generatedEulogy = await generateCompletion([
+      { role: 'system', content: 'You are a compassionate funeral director and writer helping people create meaningful eulogies. Write with warmth, dignity, and authenticity.' },
+      { role: 'user', content: prompt }
+    ]);
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to generate eulogy. Please try again.';
+    console.error('Eulogy generation error:', err);
+  }
+}
+---
+
+<Layout title="Eulogy Generator">
+  <a href="/" class="back-link">← Back to Home</a>
+  <div class="card relative">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center hidden z-10">
+      <div class="text-center">
+        <svg class="animate-spin h-12 w-12 text-memorial-600 mx-auto mb-4" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h3 class="text-xl font-serif text-memorial-600 mb-2">Creating Your Eulogy</h3>
+        <p class="text-memorial-500">Our AI is crafting a meaningful tribute...</p>
+        <div class="mt-4 flex justify-center space-x-1">
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+          <div class="w-2 h-2 bg-memorial-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-header">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+          <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-serif text-memorial-600">Eulogy Generator</h2>
+    </div>
+
+    {error && <div class="error">{error}</div>}
+
+    {!generatedEulogy ? (
+      <form method="POST" enctype="application/x-www-form-urlencoded">
+        <div class="form-group">
+          <label class="form-label" for="name">Name of the deceased</label>
+          <input type="text" id="name" name="name" class="form-input" placeholder="Enter their name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="relationship">Your relationship</label>
+          <input type="text" id="relationship" name="relationship" class="form-input" placeholder="e.g., beloved mother, dear friend" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="qualities">Their best qualities</label>
+          <input type="text" id="qualities" name="qualities" class="form-input" placeholder="e.g., kindness, humor, generosity" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="memories">Special memories or stories</label>
+          <textarea id="memories" name="memories" class="form-textarea" placeholder="Share a meaningful memory..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tone">Tone</label>
+          <select id="tone" name="tone" class="form-select">
+            <option value="warm">Warm & Comforting</option>
+            <option value="celebratory">Celebratory & Uplifting</option>
+            <option value="reflective">Reflective & Peaceful</option>
+            <option value="formal">Formal & Traditional</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Generate Eulogy</button>
+      </form>
+    ) : (
+      <div>
+        <div class="result-box"><p class="result-text">{generatedEulogy}</p></div>
+        <div class="button-group">
+          <a href="/eulogy-generator" class="btn btn-secondary">Generate Another</a>
+          <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.querySelector('.result-text').textContent)">Copy Eulogy</button>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    if (form && loadingOverlay) {
+      form.addEventListener('submit', () => {
+        loadingOverlay.classList.remove('hidden');
+      });
+    }
+  });
+</script>

@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const messages = [
+  { id: 1, author: 'Sarah Thompson', text: 'Mom always made the best apple pie. I can still smell it baking on Sunday mornings.', date: 'October 2, 2024' },
+  { id: 2, author: 'Michael Chen', text: 'Margaret taught me how to garden. Every spring I plant roses in her memory.', date: 'October 1, 2024' },
+];
+---
+
+<Layout title="Brief Message Tribute Wall">
+  <a href="/" class="back-link">← Back to Home</a>
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-serif text-memorial-600">Brief Message Tribute Wall</h2>
+    </div>
+
+    <form id="messageForm" method="POST" enctype="application/x-www-form-urlencoded">
+      <div class="form-group">
+        <label class="form-label" for="authorName">Your name</label>
+        <input type="text" id="authorName" name="authorName" class="form-input" placeholder="Your name" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="messageText">Share a memory or message</label>
+        <textarea id="messageText" name="messageText" class="form-textarea" placeholder="Share a memory..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Share Memory</button>
+    </form>
+  </div>
+
+  <div id="messagesContainer">
+    {messages.map((message) => (
+      <div class="card mb-4">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-10 h-10 bg-memorial-50 rounded-full flex items-center justify-center text-memorial-500 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-base mb-1">{message.author}</h4>
+            <span class="text-sm text-memorial-500">{message.date}</span>
+          </div>
+        </div>
+        <p class="leading-relaxed text-memorial-600">{message.text}</p>
+      </div>
+    ))}
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('messageForm') as HTMLFormElement;
+  const container = document.getElementById('messagesContainer');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const name = formData.get('authorName') as string;
+    const text = formData.get('messageText') as string;
+    const html = `<div class="card mb-4"><div class="flex items-center gap-4 mb-4"><div class="w-10 h-10 bg-memorial-50 rounded-full flex items-center justify-center text-memorial-500 flex-shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div><div class="flex-1"><h4 class="text-base mb-1">${name}</h4><span class="text-sm text-memorial-500">Just now</span></div></div><p class="leading-relaxed text-memorial-600">${text}</p></div>`;
+    container?.insertAdjacentHTML('afterbegin', html);
+    form.reset();
+  });
+</script>

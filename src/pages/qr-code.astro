@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Share-a-Memory QR Code">
+  <a href="/" class="back-link">← Back to Home</a>
+  <div class="card text-center max-w-2xl mx-auto">
+    <div class="card-header justify-center">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+          <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h.01M20 14h.01M20 17h.01M20 20h.01M17 20h.01M14 20h.01"></path>
+        </svg>
+      </div>
+      <h2 class="text-xl md:text-2xl font-serif text-memorial-600">Share-a-Memory QR Code</h2>
+    </div>
+
+    <p class="text-memorial-500 mb-6 md:mb-8 text-sm md:text-base px-2">
+      Display this QR code at services or gatherings so guests can easily share their memories and condolences.
+    </p>
+
+    <div class="bg-memorial-50 p-6 md:p-12 rounded-2xl inline-block mb-6 md:mb-8">
+      <div class="w-48 h-48 md:w-64 md:h-64 bg-white rounded-lg border-4 border-memorial-200 flex items-center justify-center">
+        <svg width="96" height="96" class="md:w-32 md:h-32" viewBox="0 0 24 24" fill="none" stroke="#d0d0c8" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+          <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h.01M20 14h.01M20 17h.01M20 20h.01M17 20h.01M14 20h.01"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mb-6 px-2">
+      <p class="text-sm text-memorial-500 mb-2">Tribute page URL:</p>
+      <div class="bg-memorial-50 px-3 md:px-4 py-3 rounded-lg border border-memorial-100">
+        <code class="text-xs md:text-sm text-memorial-600 break-all">https://memorystudio.com/tribute/margaret-thompson</code>
+      </div>
+    </div>
+
+    <div class="button-group max-w-sm md:max-w-md mx-auto px-2">
+      <button class="btn btn-primary text-sm md:text-base" onclick="alert('QR download feature')">Download QR Code</button>
+      <button class="btn btn-secondary text-sm md:text-base" onclick="window.print()">Print QR Code</button>
+    </div>
+  </div>
+</Layout>

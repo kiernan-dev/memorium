@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* View Transitions */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 250ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  ::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+  
+  ::view-transition-new(root) {
+    animation-name: fade-in;
+  }
+  
+  @keyframes fade-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.98); }
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; transform: scale(1.02); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  /* Page load animations - only for initial page load */
+  body:not([data-astro-transition]) {
+    animation: page-enter 0.2s ease-out;
+  }
+  
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer components {
+  .back-link {
+    @apply inline-flex items-center gap-2 text-memorial-500 no-underline mb-8 transition-all duration-200 hover:text-memorial-600 hover:translate-x-1 active:scale-95;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-memorial-100 p-8 mb-8 transition-all duration-200 hover:shadow-md;
+    animation: card-enter 0.4s ease-out;
+  }
+  
+  .card-header {
+    @apply flex items-center gap-4 mb-6;
+  }
+  
+  .icon-wrapper {
+    @apply w-12 h-12 bg-memorial-50 rounded-full flex items-center justify-center;
+  }
+  
+  .form-group {
+    @apply mb-6;
+  }
+  
+  .form-label {
+    @apply block mb-2 font-medium text-memorial-600;
+  }
+  
+  .form-input,
+  .form-textarea,
+  .form-select {
+    @apply w-full px-4 py-3 border border-memorial-200 rounded-lg text-base font-sans transition-all duration-200 focus:outline-none focus:border-memorial-600 focus:ring-2 focus:ring-memorial-600/10;
+  }
+  
+  .form-textarea {
+    @apply resize-y min-h-[120px];
+  }
+  
+  .btn {
+    @apply px-6 py-3 border-0 rounded-lg text-base font-medium cursor-pointer transition-all duration-200 font-sans active:scale-95;
+  }
+  
+  .btn-primary {
+    @apply bg-memorial-600 text-white w-full hover:bg-memorial-700 disabled:bg-memorial-400 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply bg-memorial-100 text-memorial-600 hover:bg-memorial-200;
+  }
+  
+  .result-box {
+    @apply bg-memorial-50 border border-memorial-100 rounded-xl p-6 mb-6;
+  }
+  
+  .result-text {
+    @apply leading-relaxed whitespace-pre-line text-memorial-600;
+  }
+  
+  .button-group {
+    @apply flex gap-4;
+  }
+  
+  .button-group .btn {
+    @apply flex-1;
+  }
+  
+  .error {
+    @apply bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mb-4;
+  }
+}
