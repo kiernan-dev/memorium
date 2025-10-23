@@ -52,7 +52,7 @@ Do not include a title or greeting, just the eulogy text itself.`;
 ---
 
 <Layout title="Eulogy Generator">
-  <a href="/memorium/" class="back-link">← Back to Home</a>
+  <a href="/" class="back-link">← Back to Home</a>
   <div class="card relative">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center hidden z-10">
@@ -125,7 +125,7 @@ Do not include a title or greeting, just the eulogy text itself.`;
       <div>
         <div class="result-box"><p class="result-text">{generatedEulogy}</p></div>
         <div class="button-group">
-          <a href="/memorium/eulogy-generator" class="btn btn-secondary">Generate Another</a>
+          <a href="/eulogy-generator" class="btn btn-secondary">Generate Another</a>
           <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.querySelector('.result-text').textContent)">Copy Eulogy</button>
         </div>
       </div>

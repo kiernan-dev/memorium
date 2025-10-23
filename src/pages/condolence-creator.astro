@@ -64,7 +64,7 @@ Write it as a standalone message that could be posted, shared, or written in a c
 ---
 
 <Layout title="Condolence Message Creator">
-  <a href="/memorium/" class="back-link">← Back to Home</a>
+  <a href="/" class="back-link">← Back to Home</a>
   <div class="card relative">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center hidden z-10">
@@ -118,7 +118,7 @@ Write it as a standalone message that could be posted, shared, or written in a c
       <div>
         <div class="result-box"><p class="result-text">{generatedMessage}</p></div>
         <div class="button-group">
-          <a href="/memorium/condolence-creator" class="btn btn-secondary">Create Another</a>
+          <a href="/condolence-creator" class="btn btn-secondary">Create Another</a>
           <button class="btn btn-primary" onclick="navigator.clipboard.writeText(document.querySelector('.result-text').textContent)">Copy Message</button>
         </div>
       </div>
