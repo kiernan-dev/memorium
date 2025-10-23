@@ -20,16 +20,19 @@ A compassionate web application for creating memorial content including eulogies
 ## Quick Start
 
 1. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 2. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Add your API configuration:
+
    ```env
    OPENAI_API_KEY=your_openrouter_api_key
    OPENAI_BASE_URL=https://openrouter.ai/api/v1
@@ -37,16 +40,19 @@ A compassionate web application for creating memorial content including eulogies
    ```
 
 3. **Start development server**
+
    ```bash
    pnpm run dev
    ```
 
 4. **Build for production**
+
    ```bash
    pnpm run build
    ```
 
 5. **Preview production build**
+
    ```bash
    pnpm run preview
    ```
@@ -56,6 +62,7 @@ A compassionate web application for creating memorial content including eulogies
 The application supports multiple AI providers:
 
 ### OpenRouter (Recommended)
+
 ```env
 OPENAI_API_KEY=your_openrouter_api_key
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
@@ -63,6 +70,7 @@ OPENAI_MODEL=anthropic/claude-3-haiku
 ```
 
 ### OpenAI
+
 ```env
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_BASE_URL=https://api.openai.com/v1
@@ -70,6 +78,7 @@ OPENAI_MODEL=gpt-4
 ```
 
 ### Anthropic Claude
+
 ```env
 OPENAI_API_KEY=your_anthropic_api_key
 OPENAI_BASE_URL=https://api.anthropic.com/v1
@@ -78,7 +87,7 @@ OPENAI_MODEL=claude-sonnet-4-20250514
 
 ## Project Structure
 
-```
+```txt
 src/
 ├── layouts/
 │   └── Layout.astro          # Base layout with header and styling
@@ -104,6 +113,7 @@ src/
 ## Development
 
 The application uses:
+
 - **SSR**: Server-side rendering for form handling and AI generation
 - **View Transitions**: Smooth page navigation
 - **Loading States**: Full overlay loading indicators
